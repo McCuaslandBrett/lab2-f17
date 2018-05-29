@@ -39,9 +39,12 @@ walkpgdir(pde_t *pgdir, const void *va, int alloc)
   pte_t *pgtab;
 
   pde = &pgdir[PDX(va)];
-  if(*pde & PTE_P){
+  if(*pde & PTE_P)
+  {
     pgtab = (pte_t*)P2V(PTE_ADDR(*pde));
-  } else {
+  } 
+  else 
+  {
     if(!alloc || (pgtab = (pte_t*)kalloc()) == 0)
       return 0;
     // Make sure all those PTE_P bits are zero.

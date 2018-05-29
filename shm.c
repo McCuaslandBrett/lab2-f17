@@ -7,14 +7,18 @@
 #include "proc.h"
 #include "spinlock.h"
 
-struct {
+struct 
+{
   struct spinlock lock;
-  struct shm_page {
+  struct shm_page 
+  {
     uint id;
     char *frame;
     int refcnt;
-  } shm_pages[64];
-} shm_table;
+  } 
+  shm_pages[64];
+} 
+shm_table;
 
 void shminit() {
   int i;
@@ -30,13 +34,16 @@ void shminit() {
 
 int shm_open(int id, char **pointer)
 {
-  
+  pte_t* pte;
   acquire(&(shm_table.lock));                                                             
   for (i = 0; i< 64; i++) 
   { 
-    if(shm_table.shm_pages[i].id==id)//if it finds id in table
-    {  // find the physical address of the page in the table, and map it to an available page 
-       //uses mappages to add the mapping	
+    //CASE1 : IT ALREADY EXIST
+    if(shm_table.shm_pages[i].id==id)//S1: if it finds id in table
+    {  
+        pte = walkpgdir(shm_table.shm_pages[i].id,);//S2: find the physical address of the page in the table
+       //S3:  map it to an available page 
+       mappages(pte, void *va,PGSIZE, uint pa, int perm);//uses mappages to add the mapping
        shm_table.shm_pages[i].refcnt+=1; 
        //pointer=virtual adress
        //update sz sice virt adress space expanded
@@ -44,10 +51,22 @@ int shm_open(int id, char **pointer)
        return 0;
     }                                                              
   }
-  //case it doesnt find the id in shm_table
-   //find an empty entry in shm_table
+//CASE 2:case it doesnt find the id in shm_table
+   
+  //S1:find an empty entry in shm_table
+   int pos=-1;
+   for(;pos<64;pos++)
+   {
+    if(shm_table.shm_pages[pos].id==0)
+      break;
+   } 
+   if(pos==-1)
+    return 0;
+   
+  //if((pte = walkpgdir(pgdir, a, 1)) == 0)//call walkpgdir to find address of PTE 
+  //  return -1;
    shm_table.shm_pages[pos].id=id; //initialize its id to the id passed in
-   //kmalloc a page and store its address in frame
+  // shm_table.shm_pages[pos].frame = kmalloc(); //kmalloc a page and store its address in frame
    shm_table.shm_pages[pos].refcnt=1;//set refcnt to 1
    //mappage to avaliable VA space page
    //store page mapping in shm_table
