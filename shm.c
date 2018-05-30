@@ -83,7 +83,7 @@ int shm_open(int id, char **pointer)
 
       //set refcnt to 1
       shm_table.shm_pages[pos].refcnt=1;
-
+      release(&(shm_table.lock));
       return 0;
     }
 
@@ -91,16 +91,6 @@ int shm_open(int id, char **pointer)
 
 
     return 0;
-
-  //if((pte = walkpgdir(pgdir, a, 1)) == 0)//call walkpgdir to find address of PTE
-  //  return -1;
-
-   //mappage to avaliable VA space page
-   //store page mapping in shm_table
-
-
-
-
    release(&(shm_table.lock));
   return 0;
 }
