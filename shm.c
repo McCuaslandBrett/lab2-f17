@@ -45,44 +45,63 @@ int shm_open(int id, char **pointer)
       //  pte = walkpgdir(shm_table.shm_pages[i].id,);
 
        //S3:  map it to an available page
+       // Create PTEs for virtual addresses starting at va that refer to
+       // physical addresses starting at pa. va and size might not
+       // be page-aligned.
        //ex: mappages(pgdir, 0, PGSIZE, V2P(mem), PTE_W|PTE_U);
+
+       //va = shm_table.shm_pages[i].refcnt*PGSIZE
+       //mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
+
+       //mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
        mappages(pte, void *va,PGSIZE, uint pa, PTE_W|PTE_U);//uses mappages to add the mapping
 
        shm_table.shm_pages[i].refcnt+=1;
        //pointer=virtual adress
+       *pointer = (char*)shm_table.shm_pages[i].frame;
        //update sz sice virt adress space expanded
        release(&(shm_table.lock));
        return 0;
     }
   }
 //CASE 2:case it doesnt find the id in shm_table
-
   //S1:find an empty entry in shm_table
 
-   int pos=-1;
-   for(int i=0;<64;i++)
+   for(int pos=0;<64;i++)
    {
-    if(shm_table.shm_pages[i].id==0)
+    if(shm_table.shm_pages[pos].id==0)
     {
-      pos=i;
-      break;
+      shm_table.shm_pages[pos].id=id; //initialize its id to the id passed in
+     //kmalloc a page and store its address in frame
+      shm_table.shm_pages[pos].frame = kalloc();//kmalloc?
+      //pointer=virtual adress
+      *pointer= (char*)shm_table.shm_pages[index].frame;
+
+      //update sz sice virt adress space expanded
+      //since we didnt use existing page
+      myproc()->sz += 1;//+= PGSIZE?
+
+      //set refcnt to 1
+      shm_table.shm_pages[pos].refcnt=1;
+
+      return 0;
     }
 
    }
-   if(pos==-1) //no empty position in the shm_table
+
+
     return 0;
 
   //if((pte = walkpgdir(pgdir, a, 1)) == 0)//call walkpgdir to find address of PTE
   //  return -1;
-   shm_table.shm_pages[pos].id=id; //initialize its id to the id passed in
-  // shm_table.shm_pages[pos].frame = kmalloc(); //kmalloc a page and store its address in frame
-   shm_table.shm_pages[pos].refcnt=1;//set refcnt to 1
+
    //mappage to avaliable VA space page
    //store page mapping in shm_table
 
-   //pointer=virtual adress
-   //update sz sice virt adress space expanded
-  release(&(shm_table.lock));
+
+
+
+   release(&(shm_table.lock));
   return 0;
 }
 int shm_close(int id)
