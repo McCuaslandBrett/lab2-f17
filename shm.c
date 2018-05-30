@@ -45,16 +45,7 @@ int shm_open(int id, char **pointer)
       //  pte = walkpgdir(shm_table.shm_pages[i].id,);
 
        //S3:  map it to an available page
-       // Create PTEs for virtual addresses starting at va that refer to
-       // physical addresses starting at pa. va and size might not
-       // be page-aligned.
-       //ex: mappages(pgdir, 0, PGSIZE, V2P(mem), PTE_W|PTE_U);
-
-       //va = shm_table.shm_pages[i].refcnt*PGSIZE
-       //mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
-
-       //mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm)
-       mappages(pte, void *va,PGSIZE, uint pa, PTE_W|PTE_U);//uses mappages to add the mapping
+       //mappages(myproc()->pgdir, (char*)size, PGSIZE, V2P(shm_table.shm_pages[i].frame),PTE_W|PTE_U)
 
        shm_table.shm_pages[i].refcnt+=1;
        //pointer=virtual adress
