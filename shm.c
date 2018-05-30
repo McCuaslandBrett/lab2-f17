@@ -75,7 +75,7 @@ int shm_open(int id, char **pointer)
      //kmalloc a page and store its address in frame
       shm_table.shm_pages[pos].frame = kalloc();//kmalloc?
       //pointer=virtual adress
-      *pointer= (char*)shm_table.shm_pages[index].frame;
+      *pointer= (char*)shm_table.shm_pages[pos].frame;
 
       //update sz sice virt adress space expanded
       //since we didnt use existing page
