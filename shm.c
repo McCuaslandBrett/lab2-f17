@@ -67,13 +67,16 @@ int shm_open(int id, char **pointer)
 //CASE 2:case it doesnt find the id in shm_table
   //S1:find an empty entry in shm_table
 
-   for(int pos=0;<64;i++)
+   for(int pos=0;<64;pos++)
    {
     if(shm_table.shm_pages[pos].id==0)
     {
       shm_table.shm_pages[pos].id=id; //initialize its id to the id passed in
      //kmalloc a page and store its address in frame
-      shm_table.shm_pages[pos].frame = kalloc();//kmalloc?
+      shm_table.shm_pages[pos].frame = kalloc();
+      //lin: dont forget to call memset after kalloc
+      memset(shm_table.shm_pages[pos].frame , 0, PGSIZE)
+
       //pointer=virtual adress
       *pointer= (char*)shm_table.shm_pages[pos].frame;
 
@@ -88,9 +91,7 @@ int shm_open(int id, char **pointer)
     }
 
    }
-
-
-    return 0;
+   return 0;
    release(&(shm_table.lock));
   return 0;
 }
