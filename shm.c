@@ -92,14 +92,19 @@ int shm_close(int id)
   acquire(&(shm_table.lock));
   for (i = 0; i< 64; i++)
   {
+    //CASE ID exist
     if(shm_table.shm_pages[i].id==id)//if it finds id in table
     {
        shm_table.shm_pages[i].refcnt-=1;
+       if(shm_table.shm_pages[i].refcnt==0)
+        shm_table.shm_pages[i].id=0;
        //uses mappages to add the mapping
        //pointer=virtual adress
        release(&(shm_table.lock));
       return 0;
     }
   }
+  release(&(shm_table.lock));
+  printf("Sorry that it doesnt exist %s\n",id);
  return 0; //added to remove compiler warning -- you should decide what to return
 }
