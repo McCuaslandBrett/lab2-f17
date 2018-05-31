@@ -98,8 +98,6 @@ int shm_close(int id)
        shm_table.shm_pages[i].refcnt-=1;
        if(shm_table.shm_pages[i].refcnt==0)
         shm_table.shm_pages[i].id=0;
-       //uses mappages to add the mapping
-       //pointer=virtual adress
        release(&(shm_table.lock));
       return 0;
     }
