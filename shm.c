@@ -48,7 +48,7 @@ int shm_open(int id, char **pointer)
       mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
       shm_table.shm_pages[i].refcnt++;
       //pointer=virtual adress
-      *pointer=(char *) PGROUNDUP(myproc()->sz)
+      *pointer=(char *) PGROUNDUP(myproc()->sz);
       //*pointer = (char*)shm_table.shm_pages[i].frame;
       release(&(shm_table.lock));
       return 0;
@@ -69,7 +69,7 @@ int shm_open(int id, char **pointer)
 
       //pointer=virtual adress
       //*pointer= (char*)shm_table.shm_pages[pos].frame;
-      *pointer=(char *) PGROUNDUP(myproc()->sz)
+      *pointer=(char *) PGROUNDUP(myproc()->sz);
       //update sz sice virt adress space expanded
       //since we didnt use existing page
       myproc()->sz+= PGSIZE;
