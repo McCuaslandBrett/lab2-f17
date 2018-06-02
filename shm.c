@@ -44,15 +44,18 @@ int shm_open(int id, char **pointer)
     //CASE1 : IT ALREADY EXIST
     if(shm_table.shm_pages[i].id==id)//S1: if it finds id in table
     {
-      //S3:  map it to an available page
-      //mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
-      mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
-      shm_table.shm_pages[i].refcnt++;
+      //---------- version 1 ---------------- ----
+      //mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
+      //shm_table.shm_pages[i].refcnt++;
       //pointer=virtual adress
-      //*pointer=(char *) PGROUNDUP(myproc()->sz);
-      v= ((char*)PGROUNDUP(myproc()->sz));
-      pointer=v;
-      //*pointer = (char*)shm_table.shm_pages[i].frame;
+      //v = ((char*)PGROUNDUP(myproc()->sz));
+      //pointer=v;
+      //---------------version 2------------------------- ----
+       mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
+       shm_table.shm_pages[i].refcnt++;
+       v = (char*)shm_table.shm_pages[i].frame;
+       pointer=v;
+      //--------------------------------------------------------------------
       release(&(shm_table.lock));
       return 0;
     }
