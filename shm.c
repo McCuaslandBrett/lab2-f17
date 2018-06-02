@@ -44,11 +44,12 @@ int shm_open(int id, char **pointer)
     if(shm_table.shm_pages[i].id==id)//S1: if it finds id in table
     {
       //S3:  map it to an available page
-      mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
-      //mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
+      //mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
+      mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
       shm_table.shm_pages[i].refcnt++;
       //pointer=virtual adress
-      *pointer = (char*)shm_table.shm_pages[i].frame;
+      *pointer=(char *) PGROUNDUP(myproc()->sz)
+      //*pointer = (char*)shm_table.shm_pages[i].frame;
       release(&(shm_table.lock));
       return 0;
     }
@@ -71,7 +72,7 @@ int shm_open(int id, char **pointer)
 
       //update sz sice virt adress space expanded
       //since we didnt use existing page
-      myproc()->sz += 1;//+= PGSIZE?
+      myproc()->sz+= PGSIZE;
 
       //set refcnt to 1
       shm_table.shm_pages[pos].refcnt=1;
