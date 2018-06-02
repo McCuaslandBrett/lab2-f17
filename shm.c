@@ -34,11 +34,11 @@ void shminit() {
 
 int shm_open(int id, char **pointer)
 {
-  pte_t* pte;
+  //pte_t* pte;
   int pos=0;
   int i=0;
   acquire(&(shm_table.lock));
-  for (i = 0; i< 64; i++)
+  for (; i< 64; i++)
   {
     //CASE1 : IT ALREADY EXIST
     if(shm_table.shm_pages[i].id==id)//S1: if it finds id in table
@@ -56,7 +56,7 @@ int shm_open(int id, char **pointer)
 //CASE 2:case it doesnt find the id in shm_table
   //S1:find an empty entry in shm_table
 
-   for(pos=0;<64;pos++)
+   for(pos=0;pos<64;pos++)
    {
     if(shm_table.shm_pages[pos].id==0)
     {
@@ -85,6 +85,7 @@ int shm_open(int id, char **pointer)
 }
 int shm_close(int id)
 {
+   int i;
   //you write this too!
   acquire(&(shm_table.lock));
   for (i = 0; i< 64; i++)
@@ -100,6 +101,6 @@ int shm_close(int id)
     }
   }
   release(&(shm_table.lock));
-  printf("Sorry that it doesnt exist %s\n",id);
+ // printf("Sorry that it doesnt exist %s\n",id);
  return 0; //added to remove compiler warning -- you should decide what to return
 }
