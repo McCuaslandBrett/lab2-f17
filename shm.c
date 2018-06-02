@@ -35,30 +35,28 @@ void shminit() {
 int shm_open(int id, char **pointer)
 {
   pte_t* pte;
+  int pos=0;
+  int i=0;
   acquire(&(shm_table.lock));
-  for (int i = 0; i< 64; i++)
+  for (i = 0; i< 64; i++)
   {
     //CASE1 : IT ALREADY EXIST
     if(shm_table.shm_pages[i].id==id)//S1: if it finds id in table
     {
-       //S2: find the physical address of the page in the table
-      //  pte = walkpgdir(shm_table.shm_pages[i].id,);
-
-       //S3:  map it to an available page
-       //mappages(myproc()->pgdir, (char*)size, PGSIZE, V2P(shm_table.shm_pages[i].frame),PTE_W|PTE_U)
-
-       shm_table.shm_pages[i].refcnt+=1;
-       //pointer=virtual adress
-       *pointer = (char*)shm_table.shm_pages[i].frame;
-       //update sz sice virt adress space expanded
-       release(&(shm_table.lock));
-       return 0;
+      //S3:  map it to an available page
+      mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
+      //mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
+      shm_table.shm_pages[i].refcnt++;
+      //pointer=virtual adress
+      *pointer = (char*)shm_table.shm_pages[i].frame;
+      release(&(shm_table.lock));
+      return 0;
     }
   }
 //CASE 2:case it doesnt find the id in shm_table
   //S1:find an empty entry in shm_table
 
-   for(int pos=0;<64;pos++)
+   for(pos=0;<64;pos++)
    {
     if(shm_table.shm_pages[pos].id==0)
     {
@@ -82,8 +80,7 @@ int shm_open(int id, char **pointer)
     }
 
    }
-   return 0;
-   release(&(shm_table.lock));
+  release(&(shm_table.lock));
   return 0;
 }
 int shm_close(int id)
