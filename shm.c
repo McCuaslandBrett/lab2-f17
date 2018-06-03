@@ -47,7 +47,6 @@ int shm_open(int id, char **pointer)
       //---------- version 1 ---------------- ----
       mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
       shm_table.shm_pages[i].refcnt++;
-      pointer=virtual adress
       v = ((char*)PGROUNDUP(myproc()->sz));
       pointer=v;
       //---------------version 2------------------------- ----
