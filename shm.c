@@ -45,17 +45,17 @@ int shm_open(int id, char **pointer)
     if(shm_table.shm_pages[i].id==id)//S1: if it finds id in table
     {
       //---------- version 1 ---------------- ----
-      //mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
-      //shm_table.shm_pages[i].refcnt++;
-      //pointer=virtual adress
-      //v = ((char*)PGROUNDUP(myproc()->sz));
-      //pointer=v;
+      mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
+      shm_table.shm_pages[i].refcnt++;
+      pointer=virtual adress
+      v = ((char*)PGROUNDUP(myproc()->sz));
+      pointer=v;
       //---------------version 2------------------------- ----
-       mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt*PGSIZE), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
-       shm_table.shm_pages[i].refcnt++;
+       //mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt*PGSIZE), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
+       //shm_table.shm_pages[i].refcnt++;
        //v = (char*)PGROUNDUP(shm_table.shm_pages[i].frame);
-       v = (char*)shm_table.shm_pages[i].frame;
-       pointer=v;
+       //v = (char*)shm_table.shm_pages[i].frame;
+       //pointer=v;
       //--------------------------------------------------------------------
 
       release(&(shm_table.lock));
@@ -77,16 +77,16 @@ int shm_open(int id, char **pointer)
       memset(shm_table.shm_pages[pos].frame , 0, PGSIZE);
 
       //---------- version 1 ---------------- ----
-      //pointer=virtual adress
-      //v=(char *) PGROUNDUP(myproc()->sz);
-      //pointer=v;
+      pointer=virtual adress
+      v=(char *) PGROUNDUP(myproc()->sz);
+      pointer=v;
       //update sz sice virt adress space expanded
       //since we didnt use existing page
 
       //---------------version 2------------------------- ----
       //v = (char*)PGROUNDUP(shm_table.shm_pages[pos].frame);
-      v = (char*)shm_table.shm_pages[pos].frame;
-      pointer = v;
+      //v = (char*)shm_table.shm_pages[pos].frame;
+      //pointer = v;
 
       //---------------------------------------- ----
       myproc()->sz+= PGSIZE;
