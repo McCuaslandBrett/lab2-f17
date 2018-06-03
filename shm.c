@@ -77,7 +77,7 @@ int shm_open(int id, char **pointer)
       memset(shm_table.shm_pages[pos].frame , 0, PGSIZE);
 
       //---------- version 1 ---------------- ----
-      pointer=virtual adress
+      //pointer=virtual adress
       v=(char *) PGROUNDUP(myproc()->sz);
       pointer=v;
       //update sz sice virt adress space expanded
