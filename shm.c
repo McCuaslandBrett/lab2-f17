@@ -50,6 +50,7 @@ int shm_open(int id, char **pointer)
       v = ((char*)PGROUNDUP(myproc()->sz));
       pointer=v;
       //---------------version 2------------------------- ----
+       myproc()->sz+= PGSIZE;
        //mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt*PGSIZE), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
        //shm_table.shm_pages[i].refcnt++;
        //v = (char*)PGROUNDUP(shm_table.shm_pages[i].frame);
@@ -79,8 +80,6 @@ int shm_open(int id, char **pointer)
       //pointer=virtual adress
       v=(char *) PGROUNDUP(myproc()->sz);
       pointer=v;
-      //update sz sice virt adress space expanded
-      //since we didnt use existing page
 
       //---------------version 2------------------------- ----
       //v = (char*)PGROUNDUP(shm_table.shm_pages[pos].frame);
@@ -109,7 +108,7 @@ int shm_close(int id)
     if(shm_table.shm_pages[i].id==id)//if it finds id in table
     {
        shm_table.shm_pages[i].refcnt-=1;
-       if(shm_table.shm_pages[i].refcnt==0)
+       if(shm_table.shm_pages[i].refcnt==0)//if no one else is using it
         shm_table.shm_pages[i].id=0;
        release(&(shm_table.lock));
       return 0;
