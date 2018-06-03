@@ -75,6 +75,8 @@ int shm_open(int id, char **pointer)
       shm_table.shm_pages[pos].frame = kalloc();
       //lin: dont forget to call memset after kalloc
       memset(shm_table.shm_pages[pos].frame , 0, PGSIZE);
+      //map pages
+      mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[pos].frame), PTE_W|PTE_U);
 
       //---------- version 1 ---------------- ----
       //pointer=virtual adress
