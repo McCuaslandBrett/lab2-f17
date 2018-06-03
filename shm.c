@@ -67,21 +67,26 @@ int shm_open(int id, char **pointer)
    {
     if(shm_table.shm_pages[pos].id==0)
     {
+
       shm_table.shm_pages[pos].id=id; //initialize its id to the id passed in
      //kmalloc a page and store its address in frame
       shm_table.shm_pages[pos].frame = kalloc();
       //lin: dont forget to call memset after kalloc
       memset(shm_table.shm_pages[pos].frame , 0, PGSIZE);
 
+      //---------- version 1 ---------------- ----
       //pointer=virtual adress
-      //*pointer= (char*)shm_table.shm_pages[pos].frame;
-      v=(char *) PGROUNDUP(myproc()->sz);
-      pointer=v;
+      //v=(char *) PGROUNDUP(myproc()->sz);
+      //pointer=v;
       //update sz sice virt adress space expanded
       //since we didnt use existing page
-      myproc()->sz+= PGSIZE;
 
-      //set refcnt to 1
+      //---------------version 2------------------------- ----
+      v = (char*)shm_table.shm_pages[pos].frame;
+      pointer = v;
+
+      //---------------------------------------- ----
+      myproc()->sz+= PGSIZE;
       shm_table.shm_pages[pos].refcnt=1;
       release(&(shm_table.lock));
       return 0;
