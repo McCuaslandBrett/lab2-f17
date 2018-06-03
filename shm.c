@@ -50,7 +50,7 @@ int shm_open(int id, char **pointer)
       v = ((char*)PGROUNDUP(myproc()->sz));
       pointer=v;
       //---------------version 2------------------------- ----
-       myproc()->sz+= PGSIZE;
+       //myproc()->sz+= PGSIZE;
        //mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt*PGSIZE), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
        //shm_table.shm_pages[i].refcnt++;
        //v = (char*)PGROUNDUP(shm_table.shm_pages[i].frame);
