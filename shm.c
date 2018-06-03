@@ -53,7 +53,8 @@ int shm_open(int id, char **pointer)
       //---------------version 2------------------------- ----
        mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt*PGSIZE), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
        shm_table.shm_pages[i].refcnt++;
-       v = (char*)PGROUNDUP(shm_table.shm_pages[i].frame);
+       //v = (char*)PGROUNDUP(shm_table.shm_pages[i].frame);
+       v = (char*)shm_table.shm_pages[i].frame;
        pointer=v;
       //--------------------------------------------------------------------
 
@@ -83,7 +84,8 @@ int shm_open(int id, char **pointer)
       //since we didnt use existing page
 
       //---------------version 2------------------------- ----
-      v = (char*)PGROUNDUP(shm_table.shm_pages[pos].frame);
+      //v = (char*)PGROUNDUP(shm_table.shm_pages[pos].frame);
+      v = (char*)shm_table.shm_pages[pos].frame;
       pointer = v;
 
       //---------------------------------------- ----
