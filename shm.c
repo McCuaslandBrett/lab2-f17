@@ -44,12 +44,12 @@ int shm_open(int id, char **pointer)
     //CASE1 : IT ALREADY EXIST
     if(shm_table.shm_pages[i].id==id)//S1: if it finds id in table
     {
-      //---------- version 1 ---------------- ----
-      mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
-      shm_table.shm_pages[i].refcnt++;
+      //-------------- version 1 ------------------------------
       v = ((char*)PGROUNDUP(myproc()->sz));
-      pointer=v;
-      //---------------version 2------------------------- ----
+      mappages(myproc()->pgdir, v, PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
+      shm_table.shm_pages[i].refcnt++;
+      *pointer=v;
+      //---------------version 2------------------------------
        //myproc()->sz+= PGSIZE;
        //mappages(myproc()->pgdir, (void*) PGROUNDUP(shm_table.shm_pages[i].refcnt*PGSIZE), PGSIZE, V2P(shm_table.shm_pages[i].frame), PTE_W|PTE_U);
        //shm_table.shm_pages[i].refcnt++;
@@ -75,13 +75,13 @@ int shm_open(int id, char **pointer)
       shm_table.shm_pages[pos].frame = kalloc();
       //lin: dont forget to call memset after kalloc
       memset(shm_table.shm_pages[pos].frame , 0, PGSIZE);
-      //map pages
-      mappages(myproc()->pgdir, (void*) PGROUNDUP(myproc()->sz), PGSIZE, V2P(shm_table.shm_pages[pos].frame), PTE_W|PTE_U);
+      //map pages,assuming here kalloc doesnt handle mapping need to Check
+      v=(char *) PGROUNDUP(myproc()->sz);
+      mappages(myproc()->pgdir, v, PGSIZE, V2P(shm_table.shm_pages[pos].frame), PTE_W|PTE_U);
 
       //---------- version 1 ---------------- ----
       //pointer=virtual adress
-      v=(char *) PGROUNDUP(myproc()->sz);
-      pointer=v;
+     *pointer=v;
 
       //---------------version 2------------------------- ----
       //v = (char*)PGROUNDUP(shm_table.shm_pages[pos].frame);
