@@ -97,6 +97,6 @@ int shm_close(int id)
     }
   }
   release(&(shm_table.lock));
- // printf("Sorry that it doesnt exist %s\n",id);
+ // printf("it doesnt exist %s\n",id);
  return 0; //added to remove compiler warning -- you should decide what to return
 }
